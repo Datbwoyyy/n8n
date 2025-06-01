@@ -1,33 +1,38 @@
-# Use the Debian-based n8n image so apt-get is available
-FROM n8nio/n8n:latest-debian-slim
+FROM node:18-slim
 
-# Switch to root to install system dependencies
-USER root
+# Install system dependencies for Python, Git, FFmpeg, and Puppeteer/Chrome
+RUN apt-get update && apt-get install -y python3 python3-pip git \
+    libnss3-dev libatk-bridge2.0-0 libcups2 libgtk-3-0 libgbm-dev ffmpeg \
+    chromium fonts-roboto fonts-open-sans \
+  && rm -rf /var/lib/apt/lists/*
 
-# Install Python3, pip, Node.js, npm, git, and ffmpeg
-RUN apt-get update && \
-    apt-get install -y \
-      python3 \
-      python3-pip \
-      nodejs \
-      npm \
-      git \
-      ffmpeg && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install n8n (global) 
+RUN npm install -g n8n
 
-# Clone Kokoro TTS and install its Python dependencies
-RUN git clone https://github.com/irevenko/kokoro-tts.git /opt/kokoro-tts && \
-    pip3 install --no-cache-dir torch soundfile && \
-    pip3 install --no-cache-dir -r /opt/kokoro-tts/requirements.txt
-
-# Install Scriptimate globally via npm
+# Install Scriptimate (global). Skip Puppeteer's bundled Chromium (we use apt's).
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 RUN npm install -g scriptimate
 
-# Ensure Kokoro-TTS directory is owned by the 'node' user (n8n runs as 'node')
-RUN chown -R node:node /opt/kokoro-tts
+# Clone and install Kokoro TTS into /opt/kokoro-tts
+RUN git clone https://github.com/nazdridoy/kokoro-tts.git /opt/kokoro-tts
+WORKDIR /opt/kokoro-tts
+RUN pip3 install -r requirements.txt
 
-# Switch back to the 'node' user for n8n runtime
-USER node
+# Download Kokoro model and voice files (v1.0)
+RUN mkdir -p /opt/kokoro-tts/models \
+ && cd /opt/kokoro-tts/models \
+ && wget https://github.com/nazdridoy/kokoro-tts/releases/download/v1.0.0/voices-v1.0.bin \
+ && wget https://github.com/nazdridoy/kokoro-tts/releases/download/v1.0.0/kokoro-v1.0.onnx
 
-# (The ENTRYPOINT and CMD for n8n are inherited from the base image)
+# Add Kokoro CLI to PATH
+ENV PATH="/opt/kokoro-tts:${PATH}"
+
+# Expose default n8n port
+EXPOSE 5678
+
+# (Optional) copy a start script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Default command: run n8n
+CMD ["/start.sh"]
