@@ -1,51 +1,42 @@
 services:
   - type: web
-    name: n8n-on-fly   # or n8n-on-railway, etc.
+    name: n8n-on-render
     env: docker
     plan: free
     repo: https://github.com/Datbwoyyy/n8n
-    branch: main
     region: oregon
+    branch: main
     dockerfilePath: ./Dockerfile
-
-    # Your n8n environment variables
     envVars:
-      # Basic Auth (optional)
       - key: N8N_BASIC_AUTH_ACTIVE
         value: "true"
       - key: N8N_BASIC_AUTH_USER
         value: 8thGod
       - key: N8N_BASIC_AUTH_PASSWORD
         value: 123Kelly123?
-
-      # n8n host/port (must match EXPOSE 5678)
       - key: N8N_HOST
         value: 0.0.0.0
       - key: N8N_PORT
         value: "5678"
-      - key: PORT
-        value: "5678"
-      - key: WEBHOOK_URL
-        value: https://<your-n8n-domain>.onrender.com/
-
-      # Example Postgres (adjust or remove if you use a different DB)
       - key: DB_TYPE
         value: postgresdb
       - key: DB_POSTGRESDB_HOST
-        value: <your-db-host>.example.com
+        value: dpg-d0ucq8adbo4c73at2bkg-a.oregon-postgres.render.com
       - key: DB_POSTGRESDB_PORT
         value: "5432"
       - key: DB_POSTGRESDB_DATABASE
-        value: <your-db-name>
+        value: victor_egbo
       - key: DB_POSTGRESDB_USER
-        value: <your-db-user>
+        value: victor_egbo_user
       - key: DB_POSTGRESDB_PASSWORD
-        value: <your-db-password>
+        value: PaLHhGN9Vj6lu8UeGffdGdXXl3QODrsd
       - key: DB_SSL
         value: "true"
       - key: DB_SSL_SELF_SIGNED
         value: "true"
-
-      # Skip n8n’s config file‐permissions error
+      - key: PORT
+        value: "5678"
+      - key: WEBHOOK_URL
+        value: https://n8n-on-render.onrender.com/
       - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
         value: "false"
