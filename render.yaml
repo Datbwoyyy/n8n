@@ -18,25 +18,3 @@ services:
         value: 0.0.0.0
       - key: N8N_PORT
         value: "5678"
-      - key: DB_TYPE
-        value: postgresdb
-      - key: DB_POSTGRESDB_HOST
-        value: dpg-d0ucq8adbo4c73at2bkg-a.oregon-postgres.render.com
-      - key: DB_POSTGRESDB_PORT
-        value: "5432"
-      - key: DB_POSTGRESDB_DATABASE
-        value: victor_egbo
-      - key: DB_POSTGRESDB_USER
-        value: victor_egbo_user
-      - key: DB_POSTGRESDB_PASSWORD
-        value: PaLHhGN9Vj6lu8UeGffdGdXXl3QODrsd
-      - key: DB_SSL
-        value: "true"
-      - key: DB_SSL_SELF_SIGNED
-        value: "true"
-      - key: PORT
-        value: "5678"
-      - key: WEBHOOK_URL
-        value: https://n8n-on-render.onrender.com/
-      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
-        value: "false"
